@@ -1,6 +1,6 @@
 import boto3
 import json
-import pymysql
+import psycopg2
 import sys
 import time
 import os
@@ -13,17 +13,9 @@ session = boto3.Session(
     region_name=''
 )
 
-# Configration start
-#   #config rds
-host_name = ''
-database_user='adminanand'
-database_password='anand123'
-database_name='chat'
-table_name = 'message'
-#   #config sqs
-queue_url = 'https://sqs.us-east-1.amazonaws.com/524028545999/ChatQueue'
-
-# Configration end
+# config sqs
+queue_url = 'https://sqs.us-east-1c.amazonaws.com/524028545999/ChatQueue'
+table_name = "message"
 
 logs = []
 def print_status(status="",log=None):
@@ -36,14 +28,9 @@ def print_status(status="",log=None):
 
 
 def connect_to_database():
-    return pymysql.connect(
-        host = host_name,
-        user=database_user,
-        password=database_password,
-        db=database_name,
-        charset='utf8mb4',
-        cursorclass=pymysql.cursors.DictCursor
-    )
+    connection = psycopg2.connect(database="chat-db", user="adminand", password="anand123", host="chat-db.cyl7a0rqpuos.us-east-1.rds.amazonaws.com", port=5432)
+    return connection 
+
 
 def reconnect_rds():
     while True:
